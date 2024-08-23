@@ -2,6 +2,7 @@
 
 pragma solidity ^0.8.18;
 
+import { console } from 'forge-std/Test.sol';
 import {DecentralizedStableCoin} from "./DecentralizedStableCoin.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
@@ -133,7 +134,6 @@ contract DSCEngine is ReentrancyGuard {
         }
     }
 
-
     /**
      * 
      * @param tokenCollateralAddress the collateral address to redeem
@@ -254,7 +254,6 @@ contract DSCEngine is ReentrancyGuard {
         (uint256 totalDscMinted, uint256 collateralValueInUsd) = _getAccountInformation(user);
         uint256 collateralAdjustedForThreshold = (collateralValueInUsd * LIQUIDATION_THRESHOLD) / LIQUIDATION_PRECISION;
         return (collateralAdjustedForThreshold * PRECISION) / totalDscMinted;
-        // return (collateralValueInUsd / totalDscMinted);
     }
 
     // check health factor
@@ -274,7 +273,7 @@ contract DSCEngine is ReentrancyGuard {
         // price of ETH (token)
         AggregatorV3Interface priceFeed = AggregatorV3Interface(s_priceFeeds[token]);
         (,int256 price,,,) = priceFeed.latestRoundData();
-        return (usdAmountInWei * PRECISION) / uint256(price) * ADDITIONAL_FEED_PRECISION;
+        return ((usdAmountInWei * PRECISION) / (uint256(price) * ADDITIONAL_FEED_PRECISION));
     }
 
     function getAccountCollateralValue(address user) public view returns(uint256 totalCollateralValueInUsd) {
